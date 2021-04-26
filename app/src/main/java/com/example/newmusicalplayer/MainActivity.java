@@ -145,13 +145,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            final TextView songPositionTextView=findViewById(R.id.currentPosition);
+            final TextView songDurationTextView=findViewById(R.id.songDuration);
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     final String musicFilePath=musicFileList.get(position);
-                    final int songDuration=playMusicFile(musicFilePath);
+                    final int songDuration=playMusicFile(musicFilePath)/1000;
                     seekBar.setMax(songDuration);
                     seekBar.setVisibility(View.VISIBLE);
+
+                    songDurationTextView.setText(String.valueOf(songDuration/60)+":"+String.valueOf(songDuration%60));
 
                     new Thread(){
                         //seekbar added
@@ -164,14 +169,16 @@ public class MainActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
-                                songPosition+=1000;
+                                songPosition++;
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         seekBar.setProgress(songPosition);
+                                        songPositionTextView.setText(String.valueOf(songPosition));
+
                                     }
                                 });
-                                seekBar.setProgress(songPosition);
+                               // seekBar.setProgress(songPosition);
                             }
 
                         }
