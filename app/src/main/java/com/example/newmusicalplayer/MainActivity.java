@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.io.File;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSIONS_COUNT=1;
     @SuppressLint("NewApi")
     private boolean arePermissionsDenied(){
-        for (int i=0;i<PERMISSIONS_COUNT;i++)
+        for (int i=0;i<PERMISSIONS_COUNT;i++) 
         {
             if (checkSelfPermission(PERMISSIONS[i])!= PackageManager.PERMISSION_GRANTED){
                 return true;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void playMusicFile(String path){
+    private int playMusicFile(String path){
         MediaPlayer mp=new MediaPlayer();
         try {
             mp.setDataSource(path);
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
+        return mp.getDuration();
     }
 
     @Override
@@ -120,11 +122,17 @@ public class MainActivity extends AppCompatActivity {
             textAdapter.setData(musicFileList);
             listView.setAdapter(textAdapter);
 
+            final SeekBar seekBar=findViewById(R.id.seekBar);
+
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     final String musicFilePath=musicFileList.get(position);
-                    playMusicFile(musicFilePath);
+                    final int songDuration=playMusicFile(musicFilePath);
+                    seekBar.setMax(songDuration);
+                    seekBar.setVisibility(View.VISIBLE);
+
+
 
                 }
             });
