@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         return mp.getDuration();
     }
 
+
+    private int songPosition;
     @Override
     protected void onResume()
     {
@@ -150,6 +152,31 @@ public class MainActivity extends AppCompatActivity {
                     final int songDuration=playMusicFile(musicFilePath);
                     seekBar.setMax(songDuration);
                     seekBar.setVisibility(View.VISIBLE);
+
+                    new Thread(){
+                        //seekbar added
+                        public void run(){
+                             songPosition=0;
+                            while (songPosition<songDuration){
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                songPosition+=1000;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        seekBar.setProgress(songPosition);
+                                    }
+                                });
+                                seekBar.setProgress(songPosition);
+                            }
+
+                        }
+                    }.start();
+
 
 
 
