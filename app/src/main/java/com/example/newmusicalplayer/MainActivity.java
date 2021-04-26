@@ -90,9 +90,10 @@ public class MainActivity extends AppCompatActivity {
         )));
 
     }
+    private MediaPlayer mp;
 
     private int playMusicFile(String path){
-        MediaPlayer mp=new MediaPlayer();
+         mp=new MediaPlayer();
         try {
             mp.setDataSource(path);
             mp.prepare();
@@ -123,6 +124,24 @@ public class MainActivity extends AppCompatActivity {
             listView.setAdapter(textAdapter);
 
             final SeekBar seekBar=findViewById(R.id.seekBar);
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int songProgress;
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    songProgress=progress;
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                    mp.seekTo(songProgress);
+                }
+            });
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
