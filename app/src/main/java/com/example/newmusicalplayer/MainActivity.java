@@ -107,10 +107,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     private int songPosition;
-    private boolean isSongPlaying;
+    private volatile boolean isSongPlaying;
+    private int mPposition;
 
-    private void playSong(int position){
-        final String musicFilePath=musicFileList.get(position);
+    private void playSong(){
+        final String musicFilePath=musicFileList.get(mPposition);
         final int songDuration=playMusicFile(musicFilePath)/1000;
         seekBar.setMax(songDuration);
         seekBar.setVisibility(View.VISIBLE);
@@ -118,12 +119,13 @@ public class MainActivity extends AppCompatActivity {
         playBackControls.setVisibility(View.VISIBLE);
 
         songDurationTextView.setText(String.valueOf(songDuration/60)+":"+String.valueOf(songDuration%60));
-        isSongPlaying=true;
+
 
         new Thread(){
             //seekbar added
             public void run(){
                 songPosition=0;
+                isSongPlaying=true;
                 while (songPosition<songDuration){
                     try {
                         Thread.sleep(1000);
@@ -232,7 +234,13 @@ public class MainActivity extends AppCompatActivity {
                         mp.pause();
                         pauseButton.setText("play");
                     }else {
-                        mp.start();
+                        if (songPosition==0){
+                            playSong();
+                        }else{
+                            mp.start();
+
+                        }
+
                         pauseButton.setText("pause");
                     }
                     isSongPlaying=!isSongPlaying;
@@ -242,8 +250,9 @@ public class MainActivity extends AppCompatActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    mPposition=position;
 
-                    playSong(position);
+                    playSong();
 
 
                 }
